@@ -418,6 +418,12 @@ body {
 /*-----------------------------------*\
   #form
 \*-----------------------------------*/
+.hidden{
+  visibility: hidden;
+}
+.shown{
+  visibility: visible;
+}
 
 .form-section{
   margin-top: 80px;
@@ -678,6 +684,14 @@ p{  font-size:14px;
 \*-----------------------------------*/
 
 .about { padding-block-start: 100px; }
+.section-text{
+  display: none;
+  margin-bottom: 20px;
+}
+.active {
+  background-color: var(--babyblue);
+  color: var(--white);
+}
 
 .about-banner {
   position: relative;
@@ -695,10 +709,22 @@ p{  font-size:14px;
   left: calc(100% + 40px);
 }
 
+.banner-col {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+
+.about-img:hover {
+  transform: scale(1.2);
+
+} 
 .about-img { 
   max-width: 100%;
   margin-block-end: 0; 
   margin-left: 20px;
+  transition: transform 0.3s;
 }
 
 .about-img:first-child { margin-block-end: 30px; }
@@ -832,6 +858,18 @@ p{  font-size:14px;
   background-position: center top;
   margin-block-start: -200px;
   padding-block-start: 200px;
+}
+.service-card {
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  transform: scale(1.2);
+  background-color: rgb(199, 236, 248);
+}
+
+.service-card:hover .card-icon {
+  color:var(--babyblue);
 }
 
 .service .section-title { margin-block: 10px 40px; }

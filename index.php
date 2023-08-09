@@ -31,6 +31,74 @@
   <!-- 
     - #HEADER
   -->
+  <?php
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $db = "watercareproject";
+
+    try {
+        // Establish the database connection
+        $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        $raised1 = 0; // Initialize with default value
+        $raised2 = 0; // Initialize with default value
+        $raised3 = 0; // Initialize with default value
+        $raised4 = 0; // Initialize with default value
+      
+      // Perform the database queries and fetch the results
+      $query1 = $pdo->query('SELECT SUM(`Harvest Rainwater`) AS total1 FROM client;');
+      $result1 = $query1->fetch(PDO::FETCH_ASSOC);
+      $raised1 = intval($result1['total1']);
+      
+      $query2 = $pdo->query('SELECT SUM(`Conserve Water`) AS total2 FROM client;');
+      $result2 = $query2->fetch(PDO::FETCH_ASSOC);
+      $raised2 = intval($result2['total2']);
+      
+      $query3 = $pdo->query('SELECT SUM(`Desalination`) AS total3 FROM client;');
+      $result3 = $query3->fetch(PDO::FETCH_ASSOC);
+      $raised3 = intval($result3['total3']);
+      
+      $query4 = $pdo->query('SELECT SUM(`Reuse Wastewater`) AS total4 FROM client;');
+      $result4 = $query4->fetch(PDO::FETCH_ASSOC);
+      $raised4 = intval($result4['total4']);
+      // Update the values in the totals_amount table
+      $updateQuery = $pdo->prepare('UPDATE donation_totals SET `amount1` = :raised1, `amount2` = :raised2, `amount3` = :raised3, `amount4` = :raised4 WHERE id = 1');
+
+// Bind the raised amounts to the parameters in the prepared statement
+     $updateQuery->bindParam(':raised1', $raised1, PDO::PARAM_INT);
+     $updateQuery->bindParam(':raised2', $raised2, PDO::PARAM_INT);
+     $updateQuery->bindParam(':raised3', $raised3, PDO::PARAM_INT);
+     $updateQuery->bindParam(':raised4', $raised4, PDO::PARAM_INT);
+
+// Execute the update query
+$updateQuery->execute();
+
+      
+        // Calculate the difference between raised and the goal
+        $goal1 = 200000;
+        $goal2 = 100000;
+        $goal3 = 500000;
+        $goal4 = 400000;
+    
+        $difference1 = $goal1 - $raised1;
+        $difference2 = $goal2 - $raised2;
+        $difference3 = $goal3 - $raised3;
+        $difference4 = $goal4 - $raised4;
+        
+        // Calculate the percentage of raised amount
+        $percentage1 = ($raised1 / $goal1) * 100;
+        $percentage2 = ($raised2 / $goal2) * 100;
+        $percentage3 = ($raised3 / $goal3) * 100;
+        $percentage4 = ($raised4 / $goal4) * 100;
+
+        
+    } catch (PDOException $e) {
+        echo "Connection failed: " . $e->getMessage();
+    }
+?>
+
 
   <header class="header" data-header>
     <div class="container">
@@ -94,6 +162,13 @@
             </a>
           </li>
 
+          <li>
+            <a href="login.php" class="navbar-link" data-nav-link>
+              <span>log in</span>
+
+            </a>
+          </li>
+
         </ul>
 
       </nav>
@@ -101,7 +176,7 @@
       <div class="header-action">
         <a href="form.html">
         <button class="btn btn-primary">
-          <span>Donation</span>
+          <span>Sign Up</span>
 
           <ion-icon name="heart-outline" aria-hidden="true"></ion-icon>
         </button>
@@ -112,6 +187,7 @@
     </div>
   </header>
 
+  
 
 
 
@@ -276,25 +352,44 @@
             <ul class="tab-nav" style="list-style-type: cercle; color:black;">
 
               <li>
-                <button class="tab-btn active">Our Mission</button>
+                <button class="tab-btn" id="missionButton"  onclick="switchParagraph('missionButton', 'missionParagraph')">Our Mission</button>
               </li>
 
               <li>
-                <button class="tab-btn">Our Vision</button>
+                <button id="visionButton" class="tab-btn" onclick="switchParagraph('visionButton', 'visionParagraph')">Our Vision</button>
               </li>
 
               <li>
-                <button class="tab-btn">Next Plan</button>
+                <button class="tab-btn" id="nextPlanButton" onclick="switchParagraph('nextPlanButton', 'nextPlanParagraph')">Next Plan</button>
               </li>
 
             </ul>
 
             <div class="tab-content">
 
-              <p class="section-text">
+              <p class="section-text" id="missionParagraph">
                 With our expertise, experience, and commitment to making a difference, 
                 choosing us means that your donation will go towards making 
                 a real and lasting impact in the fight against water scarcity in Tunisia.
+              </p>
+              <p class="section-text" id="visionParagraph">
+                Our vision is a water-abundant Tunisia, where every 
+                person has access to clean and sustainable water resources. It aims
+                 to raise awareness, foster responsible water usage, and implement 
+                 innovative solutions to overcome water scarcity challenges. By 
+                 creating a culture of conservation and collaboration, the 
+                 organization envisions a future where water scarcity is minimized, 
+                 and the well-being of 
+                communities is secured through reliable and equitable access to water.
+              </p>
+              <p class="section-text" id="nextPlanParagraph">
+                Our next plan focuses on implementing effective 
+                water conservation strategies in Tunisia. This includes enhancing 
+                infrastructure, promoting efficient water usage, and increasing
+                 awareness about sustainable water practices. Through collaboration,
+                  research, and education, the organization aims to ensure long-term
+                   water availability 
+                and improve the quality of life for communities across Tunisia.
               </p>
 
               <ul >
@@ -307,7 +402,10 @@
               </ul>
 
               <button class="btn btn-secondary" style="margin-top: 20px;">
-                <span>Learn More About Us</span>
+                <a href="#footer" class="navbar-link" data-nav-link>
+                  <span>Learn More About Us</span>
+                </a>
+                
 
                 <ion-icon name="heart-outline" aria-hidden="true"></ion-icon>
               </button>
@@ -379,12 +477,6 @@
                    using water-efficient appliances, and reducing water waste <br> <br>
                 </p>
 
-                <a href="#" class="btn-link">
-                  <span>Read More</span>
-
-                  <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
-                </a>
-
               </div>
             </li>
 
@@ -403,12 +495,6 @@
                   <br> <br> <br>
                 </p>
 
-                <a href="#" class="btn-link">
-                  <span>Read More</span>
-
-                  <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
-                </a>
-
               </div>
             </li>
 
@@ -425,12 +511,6 @@
                   Treating and reusing wastewater can help to reduce the demand 
                   for fresh water and increase the available water supply <br> <br>
                 </p>
-
-                <a href="#" class="btn-link">
-                  <span>Read More</span>
-
-                  <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
-                </a>
 
               </div>
             </li>
@@ -449,12 +529,6 @@
                   areas and reduce the reliance on limited freshwater resources.
                   
                 </p>
-
-                <a href="#" class="btn-link">
-                  <span>Read More</span>
-
-                  <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
-                </a>
 
               </div>
             </li>
@@ -491,10 +565,10 @@
                     <p class="progress-text">
                       <span>Raised</span>
 
-                      <data value="4500">4,500DT</data>
+                      <data  value="<?php echo $raised2; ?>"><?php echo $raised2; ?> DT</data>
                     </p>
 
-                    <data class="progress-value" value="15">15%</data>
+                    <data class="progress-value" value="<?php echo $percentage2; ?>"><?php echo $percentage2; ?>%</data>
                   </div>
 
                   <h3 class="h3 card-title">Conserve Water</h3>
@@ -504,19 +578,19 @@
                     <p class="card-wrapper-text">
                       <span>Goal</span>
 
-                      <data class="blue" value="34562">30,000DT</data>
+                      <data class="blue" value="<?php echo $goal2; ?>"><?php echo $goal2; ?> DT</data>
                     </p>
 
                     <p class="card-wrapper-text">
                       <span>Raise</span>
 
-                      <data class="yellow" value="562">4,500</data>
+                      <data class="yellow" value="<?php echo $raised2; ?>"><?php echo $raised2; ?></data>
                     </p>
 
                     <p class="card-wrapper-text">
                       <span>To Go</span>
 
-                      <data class="cyan" value="864">25,500</data>
+                      <data class="cyan" value="<?php echo $difference2; ?>"><?php echo $difference2; ?></data>
                     </p>
 
                   </div>
@@ -547,10 +621,10 @@
                     <p class="progress-text">
                       <span>Raised</span>
 
-                      <data value="20,000">20,000DT</data>
+                      <data value="<?php echo $raised1; ?>"><?php echo $raised1; ?> DT</data>
                     </p>
 
-                    <data class="progress-value" value="20">20%</data>
+                    <data class="progress-value" value="<?php echo $percentage1; ?>"><?php echo $percentage1; ?>%</data>
                   </div>
 
                   <h3 class="h3 card-title">Harvest Rainwater</h3>
@@ -560,19 +634,19 @@
                     <p class="card-wrapper-text">
                       <span>Goal</span>
 
-                      <data class="green" value="100000">100,000DT</data>
+                      <data class="green" value="<?php echo $goal1; ?>"><?php echo $goal1; ?> DT</data>
                     </p>
 
                     <p class="card-wrapper-text">
                       <span>Raise</span>
 
-                      <data class="yellow" value="562">20,000</data>
+                      <data class="yellow" value="<?php echo $raised1; ?>"><?php echo $raised1; ?></data>
                     </p>
 
                     <p class="card-wrapper-text">
                       <span>To Go</span>
 
-                      <data class="cyan" value="80,000">80,000</data>
+                      <data class="cyan" value="<?php echo $difference1; ?>"><?php echo $difference1; ?></data>
                     </p>
 
                   </div>
@@ -602,10 +676,10 @@
                     <p class="progress-text">
                       <span>Raised</span>
 
-                      <data value="40,000">40,000DT</data>
+                      <data value="<?php echo $raised4; ?>"><?php echo $raised4; ?> DT</data>
                     </p>
 
-                    <data class="progress-value" value="20">20%</data>
+                    <data class="progress-value" value="<?php echo $percentage4; ?>"><?php echo $percentage4; ?>%</data>
                   </div>
 
                   <h3 class="h3 card-title">Reuse Wastewater</h3>
@@ -615,19 +689,19 @@
                     <p class="card-wrapper-text">
                       <span>Goal</span>
 
-                      <data class="green" value="200,000">200,000</data>
+                      <data class="green" value="<?php echo $goal4; ?>"><?php echo $goal4; ?></data>
                     </p>
 
                     <p class="card-wrapper-text">
                       <span>Raise</span>
 
-                      <data class="yellow" value="40,000">40,000</data>
+                      <data class="yellow"  value="<?php echo $raised4; ?>"><?php echo $raised4; ?></data>
                     </p>
 
                     <p class="card-wrapper-text">
                       <span>To Go</span>
 
-                      <data class="cyan" value="160,000">160,000</data>
+                      <data class="cyan"  value="<?php echo $difference4; ?>"><?php echo $difference4; ?>DT</data>
                     </p>
 
                   </div>
@@ -658,10 +732,10 @@
                     <p class="progress-text">
                       <span>Raised</span>
 
-                      <data value="50,000">50,000DT</data>
+                      <data value="<?php echo $raised3; ?>"><?php echo $raised3; ?>DT</data>
                     </p>
 
-                    <data class="progress-value" value="83">10%</data>
+                    <data class="progress-value"  value="<?php echo $percentage3; ?>"><?php echo $percentage3; ?>%</data>
                   </div>
 
                   <h3 class="h3 card-title">Desalination</h3>
@@ -677,13 +751,13 @@
                     <p class="card-wrapper-text">
                       <span>Raise</span>
 
-                      <data class="yellow" value="50,000">50,000</data>
+                      <data class="yellow" value="<?php echo $raised3; ?>"><?php echo $raised3; ?></data>
                     </p>
 
                     <p class="card-wrapper-text">
                       <span>To Go</span>
 
-                      <data class="cyan" value="450,000">450,000</data>
+                      <data class="cyan" value="<?php echo $difference3; ?>"><?php echo $difference3; ?></data>
                     </p>
 
                   </div>
@@ -812,11 +886,7 @@
                     </p>
                   </div>
 
-                  <button class="btn btn-white">
-                    <span>View Events</span>
-
-                    <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
-                  </button>
+                  
 
                 </div>
 
@@ -845,11 +915,7 @@
                     </p>
                   </div>
 
-                  <button class="btn btn-white">
-                    <span>View Events</span>
-
-                    <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
-                  </button>
+                  
 
                 </div>
 
@@ -878,11 +944,7 @@
                     </p>
                   </div>
 
-                  <button class="btn btn-white">
-                    <span>View Events</span>
-
-                    <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
-                  </button>
+                  
 
                 </div>
 
@@ -890,12 +952,6 @@
             </li>
 
           </ul>
-
-          <button class="btn btn-secondary">
-            <span>Learn More About Us</span>
-
-            <ion-icon name="heart-outline" aria-hidden="true"></ion-icon>
-          </button>
 
         </div>
       </section>
@@ -912,6 +968,7 @@
   <!-- 
     - #FOOTER
   -->
+
 
   <footer class="footer" id="footer">
     <div class="container">
@@ -940,23 +997,24 @@
         <div class="footer-col">
           <h2>Contact</h2>
           <div class="social-links" style="display: flex; flex-direction: column;">
-            <div style="display: flex; flex-direction: row;"><a href="#"><i class="fas fa-envelope"></i></a><p style="color:lightgrey;margin-top: 7px;">watercare@gmail.com</p></div>
-            <div style="display: flex; flex-direction: row;"><a href="#"><i class="fas fa-map-marker-alt"></i></a><p style="color:lightgrey;margin-top: 7px;">Ariana, Tunisia</p></div>
-            <div style="display: flex; flex-direction: row;"><a href="#"><i class="fas fa-phone-alt"></i></a><p style="color:lightgrey;margin-top: 7px;">+216 50 754 654</p></div>
+          <div style="display: flex; flex-direction: row;"><a href="mailto:watercare@gmail.com"><i class="fas fa-envelope"></i></a><p style="color:lightgrey;margin-top: 7px;">info@water.co.nz</p></div>
+          
+          <div  style="display: flex; flex-direction: row;">  <a rel="noreferrer noopener noreferrer" aria-label="Address" target="_blank" href="http://www.google.com/maps/place/36.8592743,10.2039706"><i class="fas fa-map-marker-alt"></i></a><p style="color:lightgrey;margin-top: 7px;">Ariana, Tunisia</p></div>
+          <div style="display: flex; flex-direction: row;"><a href="tel:+216 50 754 654"><i class="fas fa-phone-alt"></i></a><p style="color:lightgrey;margin-top: 7px;">+216 50 754 654</p></div>
           </div>
         </div>
         <div class="footer-col">
           <h2>follow us</h2>
           <div class="social-links">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://www.facebook.com/WatercareNZ"><i class="fab fa-facebook-f"></i></a>
+            <!--<a href="#"><i class="fab fa-twitter"></i></a>-->
+            <a href="https://www.instagram.com/watercare_nz/?fbclid=IwAR2SuThSeivgUokjz4Cg4pvt800aVL5CtC-JTYRMITbDgdAITfwO5sDNQuo"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.linkedin.com/company/watercare-services-limited/"><i class="fab fa-linkedin-in"></i></a>
           </div>
       </div>
         
     </div>
-    <p style="text-align: center; color:lightgrey; margin-top: 70px;">Copyright © 2023 All Rights Reserved By WATERCARE Organization</p>
+   <p style="text-align: center; color:lightgrey; margin-top: 70px;">Copyright © 2023 All Rights Reserved By WATERCARE Organization</p>
   </footer>
 
 

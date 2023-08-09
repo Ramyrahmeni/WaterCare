@@ -22,6 +22,9 @@
 </head>
 
 <body>
+
+
+
   <header class="header" data-header style="background-color:#2B2B2B ;">
     <div class="container">
 
@@ -96,156 +99,36 @@
 
 
   <section class="form-section">
-    <div class="form-container">
+    <div class="form-container" style="height: 500px;width:700px; align-items:center; margin-left:100px;margin-top:80px;">
       
-        <form action="process.php" method="POST" >
+        <form action="donation.php" method="POST" >
 
           <div class="row">
   
-              <div class="col">
+              <div class="col" >
   
-                  <h3 class="title">personal informations</h3>
+                  <h3 class="title">Log In</h3>
                   <table style="margin-left: 60px;">
+                    
                     <tr>
-                      <th>Full name <span style="color: red;display: inline-block;">*</span>
-                        :</th>
-                      <td><input type="text" class="personal-info-input" id="fn" name="FullName"></td>
+                      <th>Email:</th>
+                      <td><input type="email" class="personal-info-input" id="email" name="email"></td>
                     </tr>
                     <tr>
-                      <th>Email <span style="color: red;display: inline-block;">*</span>
-                        :</th>
-                      <td><input type="email" class="personal-info-input" id="email" name="Email"></td>
-                    </tr>
-                    <tr>
-                      <th>Password <span style="color: red;display: inline-block;">*</span>
-                        :</th>
+                      <th>Password:</th>
                       <td><input type="password" class="personal-info-input" id="password" name="password"></td>
-                    </tr>
-                    <tr>
-                      <th>Address :</th>
-                      <td><input type="text" placeholder="adress" style="padding-left: 10px; width:450px;" name="address"></td>
-                    </tr>
-                    <tr>
-                      <th><span>City :</span></th>
-                      <td><input type="text" placeholder="tunisia" style="padding-left: 10px;" name="city"></td>
                     </tr>
                     
                   </table>
-  
-                  <div class="flex">
-                      <div class="inputBox">
-                          <span>state :</span>
-                          <input type="text" placeholder="tunis" name="state">
-                      </div>
-                      <div class="inputBox">
-                          <span>phone :</span>
-                          <input type="text" placeholder="--------" name="phone">
-                      </div>
-                  </div>
-  
-              </div>
-  
-              <div class="col">
-  
-                  <h3 class="title">donation</h3>
-                  <table style="margin-right: 100px;">
-                    <tr>
-                      <th>Donation Method <span style="color: red;display: inline-block;">*</span>
-                        :</th>
-                      <td>
-                        <select id="options" name="options">
-                          <option value="card">card</option>
-                          <option value="cash">cash</option>
-                          <option value="check">check</option>
-                      </select>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Quick notice:</th>
-                      <td><p style="color:orange;">If you are from Tunisia, you can donate also by cash or by check.<br>
-                      You can find us in our location mentioned in the description or you can reach us during our events.</p>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Cards accepted <span style="color: red;display: inline-block;">*</span>
-                        :</th>
-                      <td>
-                           <img src="./assets/images/card_img.png" style=" height:43px; margin-bottom: 10px;" alt="">
-                           <div class="card-opt">
-                                <input type="radio" id="paypal" value="paypal" name="card">
-                                <input type="radio" id="mastercard" value="mastercard" name="card">
-                                <input type="radio" id="american express" value="american express" name="card">
-                                <input type="radio" id="visa" value="visa" name="card">
-                           </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Name on card <span style="color: red;display: inline-block;">*</span>
-                        :</th>
-                      <td><input type="text" placeholder="mr. x" style="padding-left: 10px;" id="card-name" name="NameOnCard"></td>
-                    </tr>
-                    <tr>
-                      <th>Credit card number <span style="color: red;display: inline-block;">*</span>
-                        :</th>
-                      <td><input type="number" placeholder="1111-2222-3333-4444" style="padding-left: 10px;" id="nbr" name="CreditCardNumber"></td>
-                    </tr>
-                    <tr>
-                      <th>Choose your purpose of donation <span style="color: red;display: inline-block;">*</span>
-                        :</th>
-                      <td>
-                        <ol>
-                          <li class="purpose-li">
-                            <input type="checkbox" id="option1" name="option1" value="Harvest Rainwater">
-                            <label for="option1"> 1. Harvest Rainwater </label>
-                  
-                          </li >
-                          <li class="purpose-li">
-                            <input type="checkbox" id="option2" name="option2" value="Conserve Water">
-                            <label for="option2">2. Conserve Water </label>
-                            
-                          </li>
-                          <li class="purpose-li" >
-                            <input type="checkbox" id="option3" name="option3" value="Desalination">
-                            <label for="option3">3. Desalination </label>
-                            
-                          </li>
-                          <li class="purpose-li">
-                            <input type="checkbox" id="option4" name="option4" value="Reuse Wastewater">
-                            <label for="option4">4. Reuse Wastewater </label>
-                            
-                          </li>
-                        </ol>
-                      </td>
-                    </tr>
-                    <tr class="hidden" id="op1">
-                      <th>Donate to Harvest Rainwater:</th>
-                      <td><input type="number" placeholder="2,000 " style="padding-left: 10px;" value="0" id="donation1" name="DonatedAmount1"></td>
-                    </tr>
-                    <tr class="hidden" id="op2">
-                      <th >Donate to Conserve Water:</th>
-                      <td ><input type="number" placeholder="2,000 " style="padding-left: 10px;" value="0"  id="donation2" name="DonatedAmount2"></td>
-                    </tr>
-                    <tr class="hidden" id="op3">
-                      <th >Donate for Desalination:</th>
-                      <td><input type="number" placeholder="2,000 " style="padding-left: 10px;" value="0"  id="donation3" name="DonatedAmount3"></td>
-                    </tr>
-                    <tr class="hidden" id="op4">
-                      <th >Donate For Reuse Wastewater:</th>
-                      <td ><input type="number" placeholder="2,000 " style="padding-left: 10px;" value="0"  id="donation4" name="DonatedAmount4"></td>
-                    </tr>
 
-                    <tr>
-                      <th>Message:</th>
-                      <td><textarea name="message" rows="6" cols="55"></textarea></td>
-                    </tr>
-                  </table>
   
               </div>
+  
       
           </div>
           
   
-          <input type="submit" method='POST' value="Donate" name="con"  class="btn btn-secondary" style="color:white;" id="donation-button">
+          <input type="submit" method='POST' value="log in" name="con2"  class="btn btn-secondary" style="color:white;" id="donation-button">
           <input type="reset" value="clear"  class="btn btn-secondary" style="color:white; margin-top: 10px;" id="donation-reset">
   
       </form>

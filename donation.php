@@ -22,6 +22,68 @@
 </head>
 
 <body>
+  
+<?php
+session_start(); // Start the session
+if (isset($_POST["con2"])) {
+  $email = $_POST['email'] ;
+  $password = $_POST['password'] ;
+
+  
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $db = "watercareproject";
+
+    try {
+      // Create a new PDO instance
+      $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
+
+      // Set PDO error mode to exception
+      $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+
+      // Debugging output
+
+      // Check if user exists in the database
+      $query = "SELECT * FROM client WHERE email = ? ";
+      $stmt = $pdo->prepare($query);
+      $stmt->execute([$email]);
+
+      
+      // Debugging output to check the number of rows returne
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+      if ($stmt->rowCount() == 0) {
+        echo "No data found for the client.";
+        header("Location: form.html");
+    }
+    if ($row['email'] == $email && $row['password'] != $password){
+      echo "No data found for the client.";
+      header("Location: login.php");
+    }
+
+      if(isset($_POST["con1"])){
+      if ($row) {
+        // Debugging output to check the existing amounts
+        echo "Existing Amount 1: " . $row['Harvest Rainwater'] . "<br>";
+        echo "Existing Amount 2: " . $row['Conserve Water'] . "<br>";
+        echo "Existing Amount 3: " . $row['Desalination'] . "<br>";
+        echo "Existing Amount 4: " . $row['Reuse Wastewater'] . "<br>";
+        header("Location: donation-process.php?email=$email");
+    } 
+  }
+      } catch (PDOException $e) {
+          echo "Error updating donation information: " . $e->getMessage();
+      }
+  } else {
+      // Redirect to the donation form if accessed directly without submitting the form
+      header("Location: donation.php");
+      exit();
+  }
+}
+  ?>
+  
   <header class="header" data-header style="background-color:#2B2B2B ;">
     <div class="container">
 
@@ -98,60 +160,20 @@
   <section class="form-section">
     <div class="form-container">
       
-        <form action="process.php" method="POST" >
+        <form action="donation-process.php" method="POST" >
 
           <div class="row">
   
               <div class="col">
   
-                  <h3 class="title">personal informations</h3>
-                  <table style="margin-left: 60px;">
-                    <tr>
-                      <th>Full name <span style="color: red;display: inline-block;">*</span>
-                        :</th>
-                      <td><input type="text" class="personal-info-input" id="fn" name="FullName"></td>
-                    </tr>
-                    <tr>
-                      <th>Email <span style="color: red;display: inline-block;">*</span>
-                        :</th>
-                      <td><input type="email" class="personal-info-input" id="email" name="Email"></td>
-                    </tr>
-                    <tr>
-                      <th>Password <span style="color: red;display: inline-block;">*</span>
-                        :</th>
-                      <td><input type="password" class="personal-info-input" id="password" name="password"></td>
-                    </tr>
-                    <tr>
-                      <th>Address :</th>
-                      <td><input type="text" placeholder="adress" style="padding-left: 10px; width:450px;" name="address"></td>
-                    </tr>
-                    <tr>
-                      <th><span>City :</span></th>
-                      <td><input type="text" placeholder="tunisia" style="padding-left: 10px;" name="city"></td>
-                    </tr>
-                    
-                  </table>
-  
-                  <div class="flex">
-                      <div class="inputBox">
-                          <span>state :</span>
-                          <input type="text" placeholder="tunis" name="state">
-                      </div>
-                      <div class="inputBox">
-                          <span>phone :</span>
-                          <input type="text" placeholder="--------" name="phone">
-                      </div>
-                  </div>
-  
-              </div>
-  
-              <div class="col">
-  
                   <h3 class="title">donation</h3>
                   <table style="margin-right: 100px;">
+                   <tr>
+                      <th>Email:</th>
+                      <td><input type="email" class="personal-info-input" id="email" name="email"value="<?php echo $email; ?>"></td>
+                    </tr>
                     <tr>
-                      <th>Donation Method <span style="color: red;display: inline-block;">*</span>
-                        :</th>
+                      <th>donation method <span style="color: red;display: inline-block;">*</span> :</th>
                       <td>
                         <select id="options" name="options">
                           <option value="card">card</option>
@@ -167,8 +189,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <th>Cards accepted <span style="color: red;display: inline-block;">*</span>
-                        :</th>
+                      <th>Cards accepted <span style="color: red;display: inline-block;">*</span>:</th>
                       <td>
                            <img src="./assets/images/card_img.png" style=" height:43px; margin-bottom: 10px;" alt="">
                            <div class="card-opt">
@@ -180,18 +201,15 @@
                       </td>
                     </tr>
                     <tr>
-                      <th>Name on card <span style="color: red;display: inline-block;">*</span>
-                        :</th>
+                      <th>Name on card <span style="color: red;display: inline-block;">*</span>:</th>
                       <td><input type="text" placeholder="mr. x" style="padding-left: 10px;" id="card-name" name="NameOnCard"></td>
                     </tr>
                     <tr>
-                      <th>Credit card number <span style="color: red;display: inline-block;">*</span>
-                        :</th>
+                      <th>Credit card number <span style="color: red;display: inline-block;">*</span>:</th>
                       <td><input type="number" placeholder="1111-2222-3333-4444" style="padding-left: 10px;" id="nbr" name="CreditCardNumber"></td>
                     </tr>
                     <tr>
-                      <th>Choose your purpose of donation <span style="color: red;display: inline-block;">*</span>
-                        :</th>
+                      <th>Choose your purpose of donation <span style="color: red;display: inline-block;">*</span>:</th>
                       <td>
                         <ol>
                           <li class="purpose-li">
@@ -245,7 +263,7 @@
           </div>
           
   
-          <input type="submit" method='POST' value="Donate" name="con"  class="btn btn-secondary" style="color:white;" id="donation-button">
+          <input type="submit" method='POST' value="Donate" name="con1"  class="btn btn-secondary" style="color:white;" id="donation-button">
           <input type="reset" value="clear"  class="btn btn-secondary" style="color:white; margin-top: 10px;" id="donation-reset">
   
       </form>
